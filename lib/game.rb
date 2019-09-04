@@ -1,58 +1,42 @@
-require_relative('Words')
+require_relative('words')
+require_relative('animations')
 class Game
-    include Words
-    attr_reader :word, :word_game, :hangman_parts
-    def initialize
+    include Words, Animations
+    def self.play
         @word = Words.word
         @word_game= Array.new(@word.size)
-        @lose_game = false
+        @game = false
         @hangman_parts = 0
-    end
-    def drawn_slots
-        i=0
-        while i<@word.size 
-            print " _ "
-            i+=1
-        end
-    end
-    def word_hint
         puts "The word have #{@word.size} letters"
+        tryLetter
     end
-
-    def findIndex
+    def self.tryLetter
         win = false
         test = @word.dup
-        until @lose_game
+        until @game
             if @word_game == test
-                @lose_game=true
-                p "YOU WIN"
-                
+                @game=true
+                Animations.win
             else
                 letter = gets.chomp.upcase
-                index = @word.index(letter)
-    
-                if index != nil
-                    
+                index = @word.index(letter)    
+                if index != nil  
                     @word_game[index] = letter
                     @word[index] = nil
                     p @word_game
                     
                 else 
                     @hangman_parts+=1
-
+                    Animations.hangman(@hangman_parts)
                     if @hangman_parts==7
-                        @lose_game=true
-                        p "YOU LOSE"
+                        @game=true
+                        Animations.lost
                     end
                 end
         end
         
-    end
-    end
+        end
+    end #tryLetter
 
 end
-
-
-
-
 
